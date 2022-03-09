@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Bare except's are bad, but this code ain't rocket surgery so I really don't care.
+# pylint: disable=bare-except
 
 import os
 import sys
@@ -39,7 +41,7 @@ def playerHas(path, search):
                 return True
 
         return False
-    except:
+    except:  # noqa
         print("Oopsy Whoopsy, the bot has done a fucky wucky")
         return False
 
@@ -52,13 +54,16 @@ def doSearch(world_folder, searchterm):
             if playerHas(os.path.join(world_folder, file), searchterm):
                 try:
                     player_name = MojangAPI.get_username(uuid)
-                except:
+                except:  # noqa
                     player_name = uuid
                 results.append(player_name)
     return results
 
 
-def help_command(update: Update, context: CallbackContext) -> None:
+# This requires the context arg, even though don't use it >.<
+def help_command(
+    update: Update, context: CallbackContext  # pylint: disable=unused-argument
+) -> None:
     """Send a message when the command /help is issued."""
     update.message.reply_text("Help I'm trapped in a telegram bot!")
 
@@ -66,23 +71,27 @@ def help_command(update: Update, context: CallbackContext) -> None:
 def search_command(update: Update, context: CallbackContext) -> None:
     """Run a search for the given ID."""
     if len(context.args) > 1 or len(context.args) == 0:
-        update.message.reply_text("@%s Please enter a single ID!" % html_escape(update.effective_user.username))
+        update.message.reply_text(
+            f"@{html_escape(update.effective_user.username)} Please enter a single ID!"
+        )
         return
 
     search_term = context.args[0]
 
     if search_term[:10] == "minecraft:":
         search_term = search_term[10:]
-    
+
     result = doSearch(world_folder, search_term)
 
     if result:
-        msg = "<b>These players currently have </b><code>%s</code><b> in their inventory:</b>" % html_escape(search_term)
+        msg = f"<b>These players currently have </b><code>{html_escape(search_term)}</code><b> in their inventory:</b>"
         for r in result:
-            msg += "\n‣ %s" % r
+            msg += f"\n‣ {r}"
         update.message.reply_html(msg)
     else:
-        update.message.reply_html("<b>No players with </b><code>%s</code><b> found</b>" % html_escape(search_term))
+        update.message.reply_html(
+            f"<b>No players with </b><code>{html_escape(search_term)}</code><b> found</b>"
+        )
 
 
 def main(token) -> None:
@@ -96,7 +105,6 @@ def main(token) -> None:
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CommandHandler("whostole", search_command))
-
 
     # Start the Bot
     updater.start_polling()
@@ -112,7 +120,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-t", "--token", help="telegram bot token", required=True)
-    parser.add_argument("-w", "--world", help="path to world", type=pathlib.Path, default="/world")
+    parser.add_argument(
+        "-w", "--world", help="path to world", type=pathlib.Path, default="/world"
+    )
 
     args = parser.parse_args()
 

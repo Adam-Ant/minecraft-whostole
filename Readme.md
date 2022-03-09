@@ -1,5 +1,7 @@
 # WhoStole
 
+[![Build Status](https://drone.spritsail.io/api/badges/Adam-Ant/minecraft-whostole/status.svg)](https://drone.spritsail.io/Adam-Ant/minecraft-whostole)
+
 A hacky minecraft telegram bot to find items in inventories.
 
 This was created to fufill a need for a small collaborative survival server - people logging off with key resources in their inventories. This allows anyone to query items in anyone's inventory, using a telegram command.
