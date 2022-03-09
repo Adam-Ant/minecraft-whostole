@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Bare except's are bad, but this code ain't rocket surgery so I really don't care.
-# pylint: disable=bare-except
+# pylint: disable=bare-except,too-many-nested-blocks
 
 import os
 import sys
@@ -32,6 +32,22 @@ def playerHas(path, search):
             return False
         for i in nbtfile["Inventory"]:
             name = i["id"]
+
+            # Check for a shulker box tile entity
+            if "tag" in i:
+                if "BlockEntityTag" in i["tag"]:
+                    if i["tag"]["BlockEntityTag"]["id"][10:] == "shulker_box":
+                        shulker = i["tag"]["BlockEntityTag"]["Items"]
+                        for item in shulker:
+
+                            name = item["id"]
+
+                            # Strip the default prefix
+                            if name[:10] == "minecraft:":
+                                name = name[10:]
+
+                            if name == search:
+                                return True
 
             # Strip the default prefix
             if name[:10] == "minecraft:":
