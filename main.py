@@ -112,7 +112,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-t", "--token", help="telegram bot token", required=True)
-    parser.add_argument("-w", "--world", help="path to world", type=pathlib.Path, required=True)
+    parser.add_argument("-w", "--world", help="path to world", type=pathlib.Path, default="/world")
 
     args = parser.parse_args()
 
